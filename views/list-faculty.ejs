@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faculty List</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .navbar {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-links {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      h1 {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .search-container {
+        margin-bottom: 2rem;
+        position: relative;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding-right: 50px;
+        transition: all 0.3s ease;
+      }
+
+      #searchInput:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        overflow-x: auto;
+      }
+
+      .faculty-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .faculty-table th,
+      .faculty-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 2px solid #f1f5f9;
+      }
+
+      .faculty-table th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+      }
+
+      .faculty-table tr:hover {
+        background-color: #f8fafc;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .edit-btn {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: white;
+      }
+
+      .delete-btn {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+      }
+
+      .edit-btn:hover,
+      .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .no-results {
+        text-align: center;
+        color: #64748b;
+        padding: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="/">
+                <img src="/images/cusat_logo.webp" alt="Logo" style="height: 40px; margin-right: 1rem;">
+            </a>
+            <a href="/add-faculty"><i class="fas fa-user-plus me-2"></i>Add Faculty</a>
+            <a href="/list-faculty"><i class="fas fa-list me-2"></i>List Faculty</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+      <h1><i class="fas fa-users me-2"></i>Faculty Members</h1>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by name..." />
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <div class="table-container">
+        <table class="faculty-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Designation</th>
+              <th>Access Code</th>
+              <th>Phone Number</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="facultyTableBody">
+            <% faculties.forEach(faculty => { %>
+            <tr data-id="<%= faculty._id %>">
+              <td><%= faculty.name %></td>
+              <td><%= faculty.department %></td>
+              <td><%= faculty.designation %></td>
+              <td><%= faculty.accessCode %></td>
+              <td><%= faculty.phone %></td>
+              <td class="actions">
+                <button class="edit-btn" onclick="editFaculty(this)">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="delete-btn" onclick="deleteFaculty('<%= faculty._id %>', this)">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          document.querySelectorAll("#facultyTableBody tr").forEach((row) => {
+            const name = row.children[0].textContent.toLowerCase();
+            row.style.display = name.includes(searchTerm) ? "" : "none";
+          });
+        });
+
+      async function deleteFaculty(id, button) {
+        try {
+          const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4f46e5",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Yes, delete it!",
+          });
+
+          if (result.isConfirmed) {
+            // Show loading indicator
+            Swal.fire({
+              title: "Deleting...",
+              text: "Please wait while we delete the faculty member.",
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+            });
+
+            // Make API call to delete
+            const response = await fetch(`/delete-faculty/${id}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || "Failed to delete faculty");
+            }
+
+            // Remove the row from the table
+            const row = button.closest("tr");
+            row.remove();
+
+            // Show success message
+            Swal.fire(
+              "Deleted!",
+              "Faculty member has been deleted.",
+              "success"
+            );
+          }
+        } catch (error) {
+          console.error("Delete error:", error);
+          Swal.fire(
+            "Error!",
+            error.message || "Failed to delete faculty",
+            "error"
+          );
+        }
+      }
+
+      function editFaculty(button) {
+        const row = button.closest("tr");
+        const id = row.dataset.id;
+        const cells = row.children;
+
+        // Get current values
+        const currentData = {
+          name: cells[0].textContent,
+          department: cells[1].textContent,
+          designation: cells[2].textContent,
+          accessCode: cells[3].textContent,
+          phone: cells[4].textContent,
+        };
+
+        // Create edit form HTML
+        const formHtml = `
+                <form id="editForm">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" id="editName" class="form-control" value="${
+                          currentData.name
+                        }" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select id="editDept" class="form-select">
+                            ${["CSE", "IT", "SFE", "CE", "ME", "EEE", "EC"]
+                              .map(
+                                (dept) => `
+                                <option value="${dept}" ${
+                                  dept === currentData.department
+                                    ? "selected"
+                                    : ""
+                                }>
+                                    ${dept}
+                                </option>
+                            `
+                              )
+                              .join("")}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Designation</label>
+                        <select id="editDesignation" class="form-select">
+                            ${[
+                              "Placement Officer",
+                              "HOD",
+                              "Department Access",
+                              "Other",
+                            ]
+                              .map(
+                                (desig) => `
+                                <option value="${desig}" ${
+                                  desig === currentData.designation
+                                    ? "selected"
+                                    : ""
+                                }>
+                                    ${desig}
+                                </option>
+                            `
+                              )
+                              .join("")}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Access Code</label>
+                        <input type="text" id="editAccessCode" class="form-control" value="${
+                          currentData.accessCode
+                        }" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" id="editPhone" class="form-control" value="${
+                          currentData.phone
+                        }" required>
+                    </div>
+                </form>
+            `;
+
+        Swal.fire({
+          title: "Edit Faculty Member",
+          html: formHtml,
+          showCancelButton: true,
+          confirmButtonColor: "#4f46e5",
+          cancelButtonColor: "#64748b",
+          confirmButtonText: "Save Changes",
+          preConfirm: () => {
+            return {
+              name: document.getElementById("editName").value,
+              department: document.getElementById("editDept").value,
+              designation: document.getElementById("editDesignation").value,
+              accessCode: document.getElementById("editAccessCode").value,
+              phone: document.getElementById("editPhone").value,
+            };
+          },
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await fetch(`/update-faculty/${id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(result.value),
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.message || "Failed to update");
+              }
+
+              // Update table only after successful API response
+              cells[0].textContent = data.faculty.name;
+              cells[1].textContent = data.faculty.department;
+              cells[2].textContent = data.faculty.designation;
+              cells[3].textContent = data.faculty.accessCode;
+              cells[4].textContent = data.faculty.phone;
+
+              Swal.fire(
+                "Updated!",
+                "Faculty record has been updated.",
+                "success"
+              );
+            } catch (error) {
+              Swal.fire(
+                "Error!",
+                error.message || "Failed to update faculty",
+                "error"
+              );
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
