@@ -10,32 +10,59 @@
     <style>
         * {
             font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .nav-links {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 0 1.5rem;
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
+            align-items: center;
         }
 
         .nav-links a {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover {
@@ -43,13 +70,24 @@
             transform: translateY(-2px);
         }
 
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
         .form-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
-            margin: 2rem auto;
-            padding: 2rem;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            transform: translateY(0);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
         }
 
         h1 {
@@ -57,24 +95,74 @@
             font-weight: 600;
             margin-bottom: 2rem;
             text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #4158D0, #C850C0);
+            border-radius: 4px;
         }
 
         .input-group {
             position: relative;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
         }
 
         .input-group input, .input-group select {
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 15px 20px;
             transition: all 0.3s ease;
             width: 100%;
+            font-size: 1rem;
+            background-color: #f8fafc;
         }
 
         .input-group input:focus, .input-group select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            border-color: #4158D0;
+            box-shadow: 0 0 0 4px rgba(65, 88, 208, 0.15);
+            background-color: white;
+            outline: none;
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            transition: opacity 0.3s ease;
+        }
+
+        .input-group input:focus::placeholder {
+            opacity: 0.7;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            padding: 0 5px;
+            background-color: white;
+            color: #4158D0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 4px;
+            z-index: 1;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        .input-group input:focus ~ label, 
+        .input-group select:focus ~ label,
+        .input-group input:not(:placeholder-shown) ~ label {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .input-icon {
@@ -83,49 +171,98 @@
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8;
+            transition: color 0.3s ease;
+        }
+
+        .input-group input:focus ~ .input-icon, 
+        .input-group select:focus ~ .input-icon {
+            color: #4158D0;
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            padding: 16px 30px;
+            border-radius: 12px;
             color: white;
             font-weight: 500;
-            transition: transform 0.3s ease;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(72, 84, 159, 0.3);
+        }
+
+        .submit-btn:hover:before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
         }
 
         .error-message {
             background: #fee2e2;
             color: #dc2626;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
             border: 2px solid #fca5a5;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
 
         .error-message i {
             font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 2rem 1rem;
+                padding: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-links">
-            <a href="/">
-                <img src="/images/cusat_logo.webp" alt="Logo" style="height: 40px; margin-right: 1rem;">
+            <a href="/" class="logo-link">
+                <img src="/images/cusat_logo.webp" alt="Logo" style="height: 45px; margin-right: 1rem; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
             </a>
-            <a href="/add-faculty"><i class="fas fa-user-plus me-2"></i>Add Faculty</a>
+            <a href="/add-faculty" class="active"><i class="fas fa-user-plus me-2"></i>Add Faculty</a>
             <a href="/list-faculty"><i class="fas fa-list me-2"></i>List Faculty</a>
+            <a href="/dashboard"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
         </div>
     </nav>
     
@@ -144,6 +281,7 @@
                     <input type="text" id="name" name="name" 
                            value="<%= locals.formData ? formData.name : '' %>"
                            placeholder="Enter full name" required>
+                    <label for="name">Full Name</label>
                     <i class="fas fa-user input-icon"></i>
                 </div>
 
@@ -158,6 +296,7 @@
                             </option>
                         <% }) %>
                     </select>
+                    <label for="department">Department</label>
                     <i class="fas fa-building input-icon"></i>
                 </div>
 
@@ -172,6 +311,7 @@
                             </option>
                         <% }) %>
                     </select>
+                    <label for="designation">Designation</label>
                     <i class="fas fa-briefcase input-icon"></i>
                 </div>
 
@@ -180,6 +320,7 @@
                     <input type="text" id="accessCode" name="accessCode" 
                            value="<%= locals.formData ? formData.accessCode : '' %>"
                            placeholder="Enter access code" required>
+                    <label for="accessCode">Access Code</label>
                     <i class="fas fa-lock input-icon"></i>
                 </div>
 
@@ -188,6 +329,7 @@
                     <input type="tel" id="phone" name="phone" 
                            value="<%= locals.formData ? formData.phone : '' %>"
                            placeholder="Enter phone number" required>
+                    <label for="phone">Phone Number</label>
                     <i class="fas fa-phone input-icon"></i>
                 </div>
 
@@ -201,6 +343,38 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/script.js"></script>
+    <script>
+        // Form submission with feedback
+        document.querySelector('.faculty-form').addEventListener('submit', function(e) {
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            submitBtn.disabled = true;
+            // Form continues normal submission
+        });
+
+        // Add floating label effect
+        document.querySelectorAll('.input-group input, .input-group select').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.parentNode.classList.add('focused');
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentNode.classList.remove('focused');
+            });
+            
+            // Check on page load for pre-filled inputs
+            if (field.value !== '') {
+                field.parentNode.classList.add('has-value');
+            }
+            
+            field.addEventListener('input', function() {
+                if (this.value !== '') {
+                    this.parentNode.classList.add('has-value');
+                } else {
+                    this.parentNode.classList.remove('has-value');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
